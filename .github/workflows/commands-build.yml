@@ -4,8 +4,10 @@ env:
   BASE_DIR: commands
 
 on:
+  push:
+    branches: [ "**" ]
   pull_request:
-    types: [ opened, synchronize ]
+    branches: [ "**" ]
 
 jobs:
   build-preview:
