@@ -1,0 +1,5 @@
+pnpm-lock.yaml
+pnpm-workspace.yaml
+bun.lock
+*.md
+*.mdx
