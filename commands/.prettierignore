@@ -3,3 +3,4 @@ pnpm-workspace.yaml
 bun.lock
 *.md
 *.mdx
+worker-configuration.d.ts
