@@ -1,0 +1,5 @@
+name = "strokkcommands"
+compatibility_date = "2025-11-01"
+
+preview_urls = true
+campatibility_flags = ["nodejs_compat"]
