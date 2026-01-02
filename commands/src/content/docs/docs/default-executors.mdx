@@ -7,9 +7,9 @@ Since **StrokkCommands v1.5**, you can now define executors to be put on command
 executor is present. This feature is meant to act as a simple way of adding help descriptions or other miscellaneous
 'default' behavior.
 
-## The `@DefaultExecutor` annotation
-This annotation has the exact same syntax as `@Executor`. It behaves the same way (in fact, you can annotate
-the same method both `@Executor` *and* `@DefaultExecutor`) and takes in the same parameter input for a preceding
+## The `@DefaultExecutes` annotation
+This annotation has the exact same syntax as `@Executes`. It behaves the same way (in fact, you can annotate
+the same method both `@Executes` *and* `@DefaultExecutes`) and takes in the same parameter input for a preceding
 literal path.
 
 The only difference is that it will also apply itself to all child notes, instead of only the current argument path.

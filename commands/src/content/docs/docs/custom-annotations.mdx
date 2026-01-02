@@ -1,0 +1,237 @@
+---
+title: Custom annotations
+description: A guide to creating custom executor wrappers, requirements, and suggestions.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+StrokkCommands provides a powerful system for creating custom meta-annotations that modify command behavior.
+These allow you to define reusable patterns for executor wrappers, requirements, and suggestions.
+
+## Custom executor wrappers
+
+The `@CustomExecutorWrapper` meta-annotation allows you to create annotations that wrap command executors.
+This is useful for adding cross-cutting concerns like timing, logging, or error handling.
+
+### Creating a wrapper annotation
+
+First, create your annotation and mark it with `@CustomExecutorWrapper`:
+
+```java
+@CustomExecutorWrapper
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.SOURCE)
+public @interface TimingWrapper {}
+```
+
+Then, in your command class, provide a static method with the same name as the annotation (in camelCase)
+that takes and returns a `Command<S>`:
+
+```java
+@TimingWrapper
+@Command("heavy-command")
+class HeavyCommand {
+
+  @TimingWrapper
+  static Command<CommandSourceStack> timingWrapper(Command<CommandSourceStack> executor) {
+    return (ctx) -> {
+      final long start = System.nanoTime();
+      try {
+        return executor.run(ctx);
+      } finally {
+        LOGGER.info("Took {} nanoseconds!", System.nanoTime() - start);
+      }
+    };
+  }
+
+  @Executes
+  void someHeavyOperation(CommandSender sender) {
+    // This handler is wrapped by the timing wrapper
+  }
+}
+```
+
+The wrapper method can optionally take a `Method` parameter to access the original method being wrapped:
+
+```java
+static Command<CommandSourceStack> timingWrapper(Command<CommandSourceStack> executor, Method method) {
+  return (ctx) -> {
+    LOGGER.info("Executing method: {}", method.getName());
+    return executor.run(ctx);
+  };
+}
+```
+
+### Unsetting inherited wrappers
+
+If a class is annotated with a `@CustomExecutorWrapper` annotation but certain methods should be excluded,
+use the `@UnsetExecutorWrapper` annotation:
+
+```java
+@TimingWrapper
+@Command("heavy-command")
+class HeavyCommand {
+
+  @Executes("heavy")
+  void someHeavyOperation(CommandSender sender) {
+    // This handler IS wrapped by @TimingWrapper
+  }
+
+  @Executes("light")
+  @UnsetExecutorWrapper
+  void someLightOperation(CommandSender sender) {
+    // This handler is NOT wrapped by @TimingWrapper
+  }
+}
+```
+
+<Aside>
+  `@UnsetExecutorWrapper` can be applied to methods, fields, types, and other annotations.
+</Aside>
+
+## Custom requirements
+
+The `@CustomRequirement` meta-annotation allows you to create annotations that add custom requirements
+(predicates) to command nodes. This is useful for permission checks beyond simple string-based permissions.
+
+### Creating a requirement annotation
+
+First, create your annotation and mark it with `@CustomRequirement`:
+
+```java
+@CustomRequirement
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.SOURCE)
+public @interface RequiresCreative {}
+```
+
+Then provide the requirement logic. There are several ways to do this:
+
+**Option 1: Static method returning boolean**
+```java
+@RequiresCreative
+static boolean requiresCreative(CommandSourceStack source) {
+  return source.getSender() instanceof Player player
+      && player.getGameMode() == GameMode.CREATIVE;
+}
+```
+
+**Option 2: Static method returning Predicate**
+```java
+@RequiresCreative
+static Predicate<CommandSourceStack> requiresCreative() {
+  return source -> source.getSender() instanceof Player player
+      && player.getGameMode() == GameMode.CREATIVE;
+}
+```
+
+**Option 3: Static field holding Predicate**
+```java
+@RequiresCreative
+static final Predicate<CommandSourceStack> requiresCreative = source ->
+    source.getSender() instanceof Player player
+    && player.getGameMode() == GameMode.CREATIVE;
+```
+
+**Option 4: Class implementing Predicate**
+```java
+@RequiresCreative
+static class RequiresCreativeCheck implements Predicate<CommandSourceStack> {
+  @Override
+  public boolean test(CommandSourceStack source) {
+    return source.getSender() instanceof Player player
+        && player.getGameMode() == GameMode.CREATIVE;
+  }
+}
+```
+
+### Using custom requirements
+
+```java
+@Command("creative-only")
+@RequiresCreative
+class CreativeOnlyCommand {
+
+  @Executes
+  void execute(CommandSender sender, @Executor Player player) {
+    // Only reachable if player is in creative mode
+  }
+}
+```
+
+## Custom suggestions
+
+The `@CustomSuggestion` meta-annotation allows you to create annotations that provide custom
+tab-completion suggestions for arguments.
+
+### Creating a suggestion annotation
+
+First, create your annotation and mark it with `@CustomSuggestion`:
+
+```java
+@CustomSuggestion
+@Target(ElementType.PARAMETER)
+@Retention(RetentionPolicy.SOURCE)
+public @interface SuggestColors {}
+```
+
+Then provide the suggestion logic. Similar to requirements, there are several ways:
+
+**Option 1: Static method matching SuggestionProvider signature**
+```java
+@SuggestColors
+static CompletableFuture<Suggestions> suggestColors(
+    CommandContext<CommandSourceStack> context,
+    SuggestionsBuilder builder
+) {
+  return builder
+      .suggest("red")
+      .suggest("green")
+      .suggest("blue")
+      .buildFuture();
+}
+```
+
+**Option 2: Static method returning SuggestionProvider**
+```java
+@SuggestColors
+static SuggestionProvider<CommandSourceStack> suggestColors() {
+  return (context, builder) -> builder
+      .suggest("red")
+      .suggest("green")
+      .suggest("blue")
+      .buildFuture();
+}
+```
+
+**Option 3: Static field holding SuggestionProvider**
+```java
+@SuggestColors
+static final SuggestionProvider<CommandSourceStack> suggestColors = (context, builder) ->
+    builder.suggest("red").suggest("green").suggest("blue").buildFuture();
+```
+
+**Option 4: Class implementing SuggestionProvider**
+```java
+@SuggestColors
+static class ColorSuggestions implements SuggestionProvider<CommandSourceStack> {
+  @Override
+  public CompletableFuture<Suggestions> getSuggestions(
+      CommandContext<CommandSourceStack> context,
+      SuggestionsBuilder builder
+  ) {
+    return builder.suggest("red").suggest("green").suggest("blue").buildFuture();
+  }
+}
+```
+
+### Using custom suggestions
+
+Apply the annotation to a parameter:
+
+```java
+@Executes
+void setColor(CommandSender sender, @SuggestColors String color) {
+  // color will have tab-completion for "red", "green", "blue"
+}
+```

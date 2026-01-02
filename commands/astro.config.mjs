@@ -36,6 +36,7 @@ export default defineConfig({
             { slug: "docs/records" },
             { slug: "docs/subcommands" },
             { slug: "docs/external-subcommands" },
+            { slug: "docs/custom-annotations" },
           ],
         },
       ],
