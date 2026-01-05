@@ -1,0 +1,9 @@
+/docs/ /common/introduction/
+/docs/dependency/ /paper/dependency/
+/docs/commands/ /paper/first-command/
+/docs/default-executors/ /common/executors/
+/docs/arguments/ /common/arguments/
+/docs/permissions/ /paper/permissions/
+/docs/records/ /common/records/
+/docs/subcommands/ /common/subcommands/
+/docs/external-subcommands/ /common/external-subcommands/
