@@ -1,0 +1,106 @@
+---
+title: Command handlers
+description: A guide to adding logic to your commands.
+---
+
+All commands are defined inside classes annotated with the `@Command` annotation. In order to add logic to your
+command you have to annotate a method inside a command class with the `@Executes` annotation, which marks that
+method (and its parameters) as a command path StrokkCommands should generate.
+
+The simplest command can look like this:
+
+```java title="BasicCommand.java"
+/// Note that all command classes and methods should have a visibility
+/// of at least package-private, however there is no need to make them public.
+@Command("basic")
+class BasicCommand {
+  private static final Logger LOGGER = LoggerFactory.getLogger(BasicCommand.class);
+
+  @Executes
+  void executeCommand() {
+    LOGGER.info("The command /basic was run!");
+  }
+}
+```
+
+## Additional paths
+You can add a string parameter to your `@Executes` annotations to provide a literal subcommand path for each
+handler. This allows for creating more complex commands, like `/turn <on|off>`:
+
+```java title="TurnCommand.java"
+@Command("turn")
+class TurnCommand {
+  private static final Logger LOGGER = LoggerFactory.getLogger(BasicCommand.class);
+  private boolean toggle = false;
+
+  @Executes("on") // --> /turn on
+  void executeOn() {
+    LOGGER.info("You've turned it on! (Was: " + toggle + ")");
+    toggle = true;
+  }
+
+  @Executes("off") // --> /turn off
+  void executeOff() {
+    LOGGER.info("You've turned it off! (Was: " + toggle + ")");
+    toggle = false;
+  }
+}
+```
+
+Paths can merge together! This means if you want a command to have the paths `/long something enabled` and
+`/long something disabled`, you can simply provide these paths as you'd expect:
+
+```java title="LongCommand.java"
+@Comand("long")
+class LongCommand {
+
+  @Executes("something enabled") // --> /long something enabled
+  void executeEnabled() {
+    // ...
+  }
+
+  @Executes("something disabled") // --> /long something disabled
+  void executeDisabled() {
+    // ...
+  }
+}
+```
+
+## Default handlers
+StrokkCommands only registers command handlers for handlers you have explicitly declared in your code.
+However, when working with commands with many arguments, you might end up with certain paths which don't lead
+to executable code. Brigadier just shows a red error message which very undescriptively tells you that such a
+command does not exist; certainly not the most helpful error message on the planet.
+
+Instead, you may want to provide some sort of command help for users who might have forgotten an argument or two.
+You can do this very easily with the `@DefaultExecutes` annotation. This annotation results in the annotated
+method being used on **all** command nodes, which don't have an explicit `@Executes` annotation, whilst still
+matching signature of the method (matching path in the annotation parameter and arguments).
+
+You can use this to your advantage to create a super simple help message for your command, if insufficient
+arguments have been provided:
+
+```java title="HelpfulCommand.java"
+@Command("helpful")
+class HelpfulCommand {
+
+  /// Runs for:
+  /// - /helpful
+  /// - /helpful with
+  /// - /helpful with <number>
+  @DefaultExecutes
+  void help(CommandSender sender) {
+    sender.sendRichMessage("<gray>Command usage: /helpful with <number:int> arguments");
+  }
+
+  /// Runs for: /helpful with <number> arguments
+  @Executes("with")
+  void mainCommandLogic(int number, @Literal String arguments) {
+    // ...
+  }
+}
+```
+
+The `@Literal` annotation on the `arguments` parameter declares that this parameter's name should be used as a
+literal path (user *has* to input that). This acts in the same way as the path you can pass to the `@Executes`
+annotation.

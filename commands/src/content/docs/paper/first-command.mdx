@@ -1,6 +1,6 @@
 ---
-title: Creating your first command
-description: A guide to creating simple commands.
+title: Your first command
+description: A guide to creating a simple command.
 ---
 
 import FirstCommandMp4 from "./assets/firstcommand.mp4";
@@ -25,12 +25,12 @@ Paper supports registering a command with aliases and description. StrokkCommand
 the additional, **optional** annotations `@Aliases` and `@Description`.
 
 ```diff lang=java
-  @Command("firstcommand")
-+ @Aliases("fc")
-+ @Description("My first StrokkCommands command!")
-  class MyFirstCommand {
+ @Command("firstcommand")
++@Aliases("fc")
++@Description("My first StrokkCommands command!")
+ class MyFirstCommand {
 
-  }
+ }
 ```
 
 ## Command logic (Execute methods)
@@ -38,16 +38,16 @@ Command logic is declared by using the `@Executes` annotation on a method. This 
 package-private. You cannot mark the method as `private`. Adding a top-level executes path (with no arguments)
 looks like this:
 ```diff lang=java
-  @Command("firstcommand")
-  @Aliases("fc")
-  @Description("My first StrokkCommands-command!")
-  class MyFirstCommand {
+ Command("firstcommand")
+ @Aliases("fc")
+ @Description("My first StrokkCommands-command!")
+ class MyFirstCommand {
 
-+   @Executes
-+   void onExecute(CommandSender sender) {
-+     sender.sendRichMessage("<#f29def>Hey there! You just executed your first command ^-^");
-+   }
-  }
++  @Executes
++  void onExecute(CommandSender sender) {
++    sender.sendRichMessage("<#f29def>Hey there! You just executed your first command ^-^");
++  }
+ }
 ```
 
 Each method requires you to add a `CommandSender` parameter. If you don't do that, you will get a compile-time error.
@@ -56,27 +56,27 @@ from calling `ctx.getSource().getSender()`.
 
 ### Player executors
 If your command requires a player to execute it, you have two ways to get it:
+
 1. `instanceof`-cast the sender:
+   ```java
+   @Executes
+   void onExecute(CommandSender sender) {
+     if (!(sender instanceof Player player)) {
+       sender.sendRichMessage("<red>This command requires a player!");
+       return;
+     }
 
-```java
-@Executes
-void onExecute(CommandSender sender) {
-  if (!(sender instanceof Player player)) {
-    sender.sendRichMessage("<red>This command requires a player!");
-    return;
-  }
-
-  player.sendRichMessage("<#f29def>Hey there! You just executed your first command ^-^");
-}
+     player.sendRichMessage("<#f29def>Hey there! You just executed your first command ^-^");
+   }
    ```
-2. Add an `Player` parameter using the `@Executor` annotation:
 
-```java
-@Executes
-void onExecute(CommandSender sender, @Executor Player player) {
-    player.sendRichMessage("<#f29def>Hey there! You just executed your first command ^-^");
-}
- ```
+2. Add an `Player` parameter using the `@Executor` annotation:
+   ```java
+   @Executes
+   void onExecute(CommandSender sender, @Executor Player player) {
+     player.sendRichMessage("<#f29def>Hey there! You just executed your first command ^-^");
+   }
+   ```
 
 Whilst both ways are acceptable, the second approach is the more 'correct' way.
 The reason is that instead of casting the command sender, you directly get the `Player` entity with executed the command.

@@ -1,0 +1,56 @@
+---
+title: Introduction
+description: An introduction to StrokkCommands.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+<Aside type="tip" title="Migrating from v1 to v2">
+
+  StrokkCommands version 2.0 introduced a bunch of changes.
+
+</Aside>
+
+## What is StrokkCommands?
+StrokkCommands is an **annotation-based command library**. You declare commands by using annotations (a.e. `@Command`)
+on classes or methods. It was originally created for the [Paper](https://github.com/PaperMC/Paper) server software,
+but was later extended to also support [Velocity](https://github.com/PaperMC/Velocity).
+
+StrokkCommands has almost every natively available argument type implemented. All you need to, is add whichever
+type you need to your command method and StrokkCommands will take care of the rest!
+
+## An example?
+Imagine you want to create a command `/viewhelp <topic> <page:int>`. You can do this simply with the following code
+(example for the Paper API):
+
+```java
+@Command("viewhelp")
+class ViewHelpCommand {
+  private static final String[] TOPICS = {"farming", "mining", "combat"};
+
+  @Executes
+  void execute(CommandSender sender, @Literal(TOPICS) String topic, int page) {
+    // your code here...
+  }
+}
+```
+
+You can instantly focus on writing the logic for your command without having to fight plain
+brigadier or another big framework!
+
+## Documentation structure
+Generally, this documentation is separated into 3 core parts:
+- Common usage -- applies to all modules
+- Paper-specific usage -- applies specifically when using with the Paper API
+- Velocity-specific usage -- applies specifically when using with the Velocity API
+
+Each page of the documentation is dedicated to a single topic. If you cannot find something, feel
+free to make use of the search feature (accessible via `CTRL + K`). If you find something
+missing, feel free to make me aware [in my Discord](https://discord.strokkur.net/) or by opening
+an issue on [my website repository](https://github.com/Strokkur424/strokkur.net).
+
+## Getting started
+To get started, visit the dependency and first-command pages of your platform:
+
+- Paper: [Adding the Dependency](/paper/dependency/) and [Your first command](/paper/first-command/).
+- Velocity: [Adding the Dependency](/velocity/dependency/) and [Your first command](/velocity/first-command/).

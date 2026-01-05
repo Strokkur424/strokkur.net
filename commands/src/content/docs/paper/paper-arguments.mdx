@@ -1,0 +1,44 @@
+---
+title: Additional arguments
+description: Paper-specific arguments.
+---
+
+In addition to the argument types Brigadier provides natively, you can also add Minecraft-implemented argument types.
+You can view a list of all on [this Paper docs page](https://docs.papermc.io/paper/dev/command-api/arguments/minecraft/).
+
+Though, there are a few special cases you should know about.
+
+## Resolved argument types
+Certain argument types *usually* have to be resolved by the developer. A very well-known example for that is the
+[player argument](https://docs.papermc.io/paper/dev/command-api/arguments/entity-player/#player-argument). Usually,
+this one returns a `PlayerSelectorArgumentResolver`, which needs resolving.
+
+**Not with StrokkCommands**! Instead of a resolver, you can instead just declare a `Player` parameter, and it will
+resolve it automatically. The same works for `List<Player>`, `Collection<Player>`, and even `Player[]`.
+
+## Resource argument types
+You can declare arguments which depend on registry values. The Paper-approach is [adding a `resource` argument type
+with a specified `RegistryKey`](https://docs.papermc.io/paper/dev/command-api/arguments/registry/#resource-argument).
+
+StrokkCommands resolves all registry key arguments natively. That means that to retrieve, for example,
+an `Enchantment`, you can just declare an `Enchantment` parameter. StrokkCommands maps that parameter to an
+`ArgumentTypes.resource(RegistryKey.ENCHANTMENT)` argument type.
+
+You can view all available registry keys (and thus the type of parameter you'd have to use) by visiting
+the [`RegistryKey<T>`](https://jd.papermc.io/paper/1.21.7/io/papermc/paper/registry/RegistryKey.html) JavaDocs.
+
+```java
+/// Brigadier expects ArgumentTypes.resource(RegistryKey.ENCHANTMENT),
+/// however you can directly use Enchantment
+@Executes
+void commandWithEnchantment(Enchantment enchantment) {
+  // ...
+}
+```
+
+## Registry key argument types
+You can get the key used for accessing the registry from the resource argument type by wrapping the return type
+in a [`TypedKey<T>`](https://jd.papermc.io/paper/1.21.7/io/papermc/paper/registry/TypedKey.html).
+
+For our `Enchantment` example, if you were to declare a `TypedKey<Enchantment>`, StrokkCommands would map that parameter
+to an `ArgumentTypes.resourceKey(RegistryKey.ENCHANTMENT)` argument type.
