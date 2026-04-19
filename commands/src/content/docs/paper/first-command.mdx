@@ -17,7 +17,7 @@ class MyFirstCommand {
 }
 ```
 
-And that is all you need for a simple command. This one obviously doesn't do anything yet, but before we add some
+And that is all you need for a simple command. This one doesn't do anything yet, but before we add some
 logic, let's add some metadata.
 
 ## Adding metadata
@@ -50,9 +50,8 @@ looks like this:
  }
 ```
 
-Each method requires you to add a `CommandSender` parameter. If you don't do that, you will get a compile-time error.
-This parameter describes the command sender of the command. In Brigadier terms, this is the object you get
-from calling `ctx.getSource().getSender()`.
+You may add a `CommandSender` parameter anywhere on each method. This parameter describes the command sender of the
+command. In Brigadier terms, this is the object you get from calling `ctx.getSource().getSender()`.
 
 ### Player executors
 If your command requires a player to execute it, you have two ways to get it:
@@ -120,15 +119,15 @@ can also provide some important insight, but for beginners, the page can be a bi
 To register your command with StrokkCommands, you have to do the following steps:
 
 ### Compiling the project
-Wait, didn't we skip a few steps? Nope! In order to be able to register the command, you have to first compile the project.
+Wait, didn't we skip a few steps? Nope! To be able to register the command, you have to first compile the project.
 The reason for this is so that the annotation processor can run and generate the required source files for your command.
 
 The source file will always be generated in the same package as the command declaration. Its file name will always be
 `<command_class_name>Brigadier.java`. That means for `your.package.MyCommand`, the new class name will be
 `your.package.MyCommandBrigadier`.
 
-The new source file will be generated in a separate sources root which is managed by your build system.
-**For Gradle**, the generated source files are located under `/build/generated/sources/annotationProcessor`.
+The new source file will be generated in a separate source root which is managed by your build system.
+**For Gradle**, the generated source files are located under `build/generated/sources/annotationProcessor`.
 
 ### Actually registering the command
 Now that we have our Brigadier source file, we can register it.

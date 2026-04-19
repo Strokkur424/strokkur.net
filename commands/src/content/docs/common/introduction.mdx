@@ -21,8 +21,7 @@ StrokkCommands has almost every natively available argument type implemented. Al
 type you need to your command method, and StrokkCommands will take care of the rest!
 
 ## An example?
-Imagine you want to create a command `/viewhelp <topic> <page:int>`. You can do this simply with the following code
-(example for the Paper API):
+Imagine you want to create a command `/viewhelp <topic> <page:int>`. You can do this simply with the following code:
 
 ```java
 @Command("viewhelp")
@@ -30,14 +29,14 @@ class ViewHelpCommand {
   private static final String[] TOPICS = {"farming", "mining", "combat"};
 
   @Executes
-  void execute(CommandSender sender, @Literal(TOPICS) String topic, int page) {
+  void execute(@Literal(TOPICS) String topic, int page) {
     // your code here...
   }
 }
 ```
 
 You can instantly focus on writing the logic for your command without having to fight plain
-brigadier or shading another big framework!
+Brigadier or shading another big framework!
 
 ## Documentation structure
 Generally, this documentation is separated into three core parts:

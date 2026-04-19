@@ -61,8 +61,9 @@ const mavenProcessorDependency = `<pluginManagement>
 
 <p>
   This separation is made with a very specific purpose in mind: To include only the most necessary classes in your
-  project classpath. Since the `processor` module only contains internal logic classes (which can have similar names as
-  Brigadier itself), having them included in the classpath would make development experience very annoying.
+  project classpath. Since the <code>processor</code> module only contains classes related to internal logic (which may
+  have similar names as Brigadier itself), having them included in the classpath would make the development experience
+  very annoying.
 </p>
 
 <p>

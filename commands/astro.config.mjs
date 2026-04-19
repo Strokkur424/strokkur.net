@@ -49,6 +49,14 @@ export default defineConfig({
           ],
         },
         {
+          label: "Velocity",
+          items: [
+            { slug: "velocity/dependency" },
+            { slug: "velocity/first-command" },
+            { slug: "velocity/permissions" },
+          ],
+        },
+        {
           label: "Migration",
           items: [{ slug: "migration/v1-v2" }],
         },

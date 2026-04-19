@@ -1,0 +1,87 @@
+---
+title: Permissions
+description: Using the `@Permission` annotation on Velocity.
+---
+
+On Velocity, you may add a `@Permission` annotation to your command classes or executes-methods. This makes it
+so that the command sender must have the specified permission to be able to see and run the command/command path.
+
+You may define permissions on multiple command paths.
+
+## Example
+The command `/test print <num>` requires the permission `test.command.print`, whilst
+`/test yell <message>` requires `test.command.yell`.
+
+Even though the permission is defined on the outermost path (the argument), StrokkCommands detects that
+the literals in front are not executable and thus moves the permission requirement onto the `print`/`yell`
+literals automatically.
+
+Furthermore, StrokkCommands is able to decide that being able to see `/test` as a user without the `test.command.print`
+*or* `test.command.yell` permission would be senseless, which is the reason for also putting the permission requirement
+onto the root command `/test`.
+
+```java title="CommandTest.java"
+@Command("test")
+class CommandTest {
+
+  @Executes("print")
+  @Permission("test.command.print")
+  void print(Player player, int num) {
+    player.sendRichMessage("<green>" + num);
+  }
+
+  @Executes("yell")
+  @Permission("test.command.yell")
+  void yell(Player player, String message) {
+    player.sendRichMessage("<red>" + message.toUpperCase());
+  }
+}
+```
+
+The generated Brigadier tree for this command looks like this:
+
+```java title="CommandTest.java"
+final CommandTest instance = new CommandTest();
+return BrigadierCommand.literalArgumentBuilder("test")
+    .requires(source -> source.hasPermission("test.command.yell") || source.hasPermission("test.command.print"))
+    .then(BrigadierCommand.literalArgumentBuilder("yell")
+        .requires(source -> source.hasPermission("test.command.yell"))
+        .then(BrigadierCommand.requiredArgumentBuilder("message", StringArgumentType.word())
+            .requires(source -> source instanceof Player)
+            .executes(ctx -> {
+                if (!(ctx.getSource() instanceof Player source)) {
+                    throw new SimpleCommandExceptionType(
+                        new LiteralMessage("This command requires a player sender!")
+                    ).create();
+                }
+
+                instance.yell(
+                    source,
+                    StringArgumentType.getString(ctx, "message")
+                );
+                return Command.SINGLE_SUCCESS;
+            })
+        )
+    )
+    .then(BrigadierCommand.literalArgumentBuilder("print")
+        .requires(source -> source.hasPermission("test.command.print"))
+        .then(BrigadierCommand.requiredArgumentBuilder("num", IntegerArgumentType.integer())
+            .requires(source -> source instanceof Player)
+            .executes(ctx -> {
+                if (!(ctx.getSource() instanceof Player source)) {
+                    throw new SimpleCommandExceptionType(
+                        new LiteralMessage("This command requires a player sender!")
+                    ).create();
+                }
+
+                instance.print(
+                    source,
+                    IntegerArgumentType.getInteger(ctx, "num")
+                );
+                return Command.SINGLE_SUCCESS;
+            })
+        )
+    );
+```
+
+Quite a bit of code, innit?
