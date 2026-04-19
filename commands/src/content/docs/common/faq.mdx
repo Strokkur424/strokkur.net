@@ -1,0 +1,48 @@
+---
+title: FAQ
+description: Frequently asked questions.
+---
+
+## What differentiates StrokkCommands from existing frameworks?
+This is a very typical and often asked question. The primary difference is how lightweight it is.
+
+Now, that's something basically all libraries say. But here I actually mean it. StrokkCommands
+adds precisely **0 bytes** of library code to your plugin!
+
+StrokkCommands is an annotation **processor** based library.
+This means that by adding annotations to your code, the processor, which is a separate Java
+program that automatically runs each time you build your project, **generates** all required
+source files right inside your project. (In a separate 'generated' sources root.)
+
+This effectively provides you with three advantages:
+1. You have zero overhead compared to other (potentially reflection-based) library frameworks which might
+be abstracted away behind very complex structures.
+2. You can look at the generated source and very easily see whether it fits what you had in mind, which also
+greatly improves the debuggability and doesn't hide everything behind library-internal logic.
+3. Your commands are fully version-independent. As the generated code is based around the long-standing Brigadier library,
+there is close to no risk of updates breaking the generated command.
+
+## What are the design principles of StrokkCommands?
+StrokkCommands takes care to do these things:
+
+### No shading
+You will never, ever have to shade anything into your plugin jar for it to work.
+
+This has the advantage of being straightforward to set up, doesn't cause any
+conflicts when two plugins have the same dependency, but different versions,
+and keeps your plugin jar nice and light (the mentioned zero bytes of library code).
+
+### No reflection
+**No reflection calls are performed**. This results in some light limitations
+with the visibility of certain classes/methods not being allowed to be private, but as they can be
+package-private instead, this should rarely ever be a real issue.
+
+### Ease of use
+StrokkCommands aims to be an **instant** dependency. This means you add the dependency and can
+get right to coding your simple commands, without having to set up anything for it to work.
+
+## Do you have a Discord server?
+Yes! You can join the Discord server by visiting https://discord.strokkur.net/, which is my personal server
+where you can talk about my libraries, get notified of updates, or just hang out and talk about plugin dev
+in general. It's a very welcoming place, but be warned that I do not tolerate trolling or negative engagement, so
+make sure to read the rules!

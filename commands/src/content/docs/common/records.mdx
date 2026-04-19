@@ -20,8 +20,8 @@ class FillBlockCommand {
 }
 ```
 
-This is perfectly fine an acceptable. The issues here start when you want to add more arguments. For example,
-if you want to add another int argument, which limits the number of placed blocks per ticks, the command would
+This is perfectly fine and acceptable. The issues here start when you want to add more arguments. For example,
+if you want to add another int argument, which limits the number of placed blocks per tick, the command would
 quickly grow to this:
 
 ```java title="FillBlockCommand.java"
@@ -42,10 +42,10 @@ class FillBlockCommand {
 
 And suddenly you got a lot of code repetition which seems unnecessary. So what is the solution?
 
-The solution are records!
+The solution is records!
 
 ## Using records
-Generally, records behave the same way as normal classes. They can be used as a drop in replacement:
+Generally, records behave the same way as normal classes. They can be used as a drop-in replacement:
 
 ```diff lang=java title="FillBlockCommand.java"
   @Command("fillblock")

@@ -5,7 +5,7 @@ description: A guide to (re)using commands declared outside your command class.
 
 import { Aside } from "@astrojs/starlight/components";
 
-Having one file per command is nice - keeps everything organized... until it doesn't. The reality of command design is
+Having one file per command is nice – keeps everything organized... until it doesn't. The reality of command design is
 that oftentimes, you end up with a lot of logic for individual root commands. The traditional way to deal with that
 issue is to put subcommands into their own files. Such an approach works wonderfully. And StrokkCommands supports it!
 
@@ -56,7 +56,7 @@ public class GameModePreset {
   }
 
   /*
-   * A common method for handling both cases in order to reduce code repetition.
+   * A common method for handling both cases to reduce code repetition.
    */
   private void changeGameMode(CommandSender sender, Player target) {
     final String targetName = sender == target ? "your" : target.getName() + "'s";
@@ -79,13 +79,13 @@ public class GameModePreset {
 }
 ```
 
-There really isn't much to be said about this prototype which would not be self-explanatory. The `@Executes`-annotated
+There really is little to be said about this prototype which would not be self-explanatory. The `@Executes`-annotated
 methods work just the same way as normal commands do. The difference here is that you can reuse this prototype
 in multiple commands.
 
 ## Applying the prototype
-In order to use a prototype, you need to declare it as a field. This field should have its value initialized
-directly, if you wish for it to have a specific implementation, or the initialization may be omitted entirely to
+To use a prototype, you need to declare it as a field. This field should have its value initialized
+directly if you wish for it to have a specific implementation, or the initialization may be omitted entirely to
 default to the non-args constructor. The general semantic looks like this:
 
 ```java
@@ -103,7 +103,7 @@ method or command class.
 For the game mode example in specific, we'd write the following code:
 ```java
 @Command("gamemode")
-@Aliasa("gm")
+@Aliases("gm")
 class GameModeCommand {
 
   @Subcommand("creative")

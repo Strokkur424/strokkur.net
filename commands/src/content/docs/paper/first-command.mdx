@@ -1,6 +1,6 @@
 ---
-title: Creating your first command
-description: A guide to creating simple commands.
+title: Your first command
+description: A guide to creating a simple command.
 ---
 
 import FirstCommandMp4 from "./assets/firstcommand.mp4";
@@ -17,7 +17,7 @@ class MyFirstCommand {
 }
 ```
 
-And that is all you need for a simple command. This one obviously doesn't do anything yet, but before we add some
+And that is all you need for a simple command. This one doesn't do anything yet, but before we add some
 logic, let's add some metadata.
 
 ## Adding metadata
@@ -25,12 +25,12 @@ Paper supports registering a command with aliases and description. StrokkCommand
 the additional, **optional** annotations `@Aliases` and `@Description`.
 
 ```diff lang=java
-  @Command("firstcommand")
-+ @Aliases("fc")
-+ @Description("My first StrokkCommands command!")
-  class MyFirstCommand {
+ @Command("firstcommand")
++@Aliases("fc")
++@Description("My first StrokkCommands command!")
+ class MyFirstCommand {
 
-  }
+ }
 ```
 
 ## Command logic (Execute methods)
@@ -38,45 +38,44 @@ Command logic is declared by using the `@Executes` annotation on a method. This 
 package-private. You cannot mark the method as `private`. Adding a top-level executes path (with no arguments)
 looks like this:
 ```diff lang=java
-  @Command("firstcommand")
-  @Aliases("fc")
-  @Description("My first StrokkCommands-command!")
-  class MyFirstCommand {
+ @Command("firstcommand")
+ @Aliases("fc")
+ @Description("My first StrokkCommands-command!")
+ class MyFirstCommand {
 
-+   @Executes
-+   void onExecute(CommandSender sender) {
-+     sender.sendRichMessage("<#f29def>Hey there! You just executed your first command ^-^");
-+   }
-  }
++  @Executes
++  void onExecute(CommandSender sender) {
++    sender.sendRichMessage("<#f29def>Hey there! You just executed your first command ^-^");
++  }
+ }
 ```
 
-Each method requires you to add a `CommandSender` parameter. If you don't do that, you will get a compile-time error.
-This parameter describes the command sender of the command. In Brigadier terms, this is the object you get
-from calling `ctx.getSource().getSender()`.
+You may add a `CommandSender` parameter anywhere on each method. This parameter describes the command sender of the
+command. In Brigadier terms, this is the object you get from calling `ctx.getSource().getSender()`.
 
 ### Player executors
 If your command requires a player to execute it, you have two ways to get it:
+
 1. `instanceof`-cast the sender:
+   ```java
+   @Executes
+   void onExecute(CommandSender sender) {
+     if (!(sender instanceof Player player)) {
+       sender.sendRichMessage("<red>This command requires a player!");
+       return;
+     }
 
-```java
-@Executes
-void onExecute(CommandSender sender) {
-  if (!(sender instanceof Player player)) {
-    sender.sendRichMessage("<red>This command requires a player!");
-    return;
-  }
-
-  player.sendRichMessage("<#f29def>Hey there! You just executed your first command ^-^");
-}
+     player.sendRichMessage("<#f29def>Hey there! You just executed your first command ^-^");
+   }
    ```
-2. Add an `Player` parameter using the `@Executor` annotation:
 
-```java
-@Executes
-void onExecute(CommandSender sender, @Executor Player player) {
-    player.sendRichMessage("<#f29def>Hey there! You just executed your first command ^-^");
-}
- ```
+2. Add an `Player` parameter using the `@Executor` annotation:
+   ```java
+   @Executes
+   void onExecute(CommandSender sender, @Executor Player player) {
+     player.sendRichMessage("<#f29def>Hey there! You just executed your first command ^-^");
+   }
+   ```
 
 Whilst both ways are acceptable, the second approach is the more 'correct' way.
 The reason is that instead of casting the command sender, you directly get the `Player` entity with executed the command.
@@ -120,15 +119,15 @@ can also provide some important insight, but for beginners, the page can be a bi
 To register your command with StrokkCommands, you have to do the following steps:
 
 ### Compiling the project
-Wait, didn't we skip a few steps? Nope! In order to be able to register the command, you have to first compile the project.
+Wait, didn't we skip a few steps? Nope! To be able to register the command, you have to first compile the project.
 The reason for this is so that the annotation processor can run and generate the required source files for your command.
 
 The source file will always be generated in the same package as the command declaration. Its file name will always be
 `<command_class_name>Brigadier.java`. That means for `your.package.MyCommand`, the new class name will be
 `your.package.MyCommandBrigadier`.
 
-The new source file will be generated in a separate sources root which is managed by your build system.
-**For Gradle**, the generated source files are located under `/build/generated/sources/annotationProcessor`.
+The new source file will be generated in a separate source root which is managed by your build system.
+**For Gradle**, the generated source files are located under `build/generated/sources/annotationProcessor`.
 
 ### Actually registering the command
 Now that we have our Brigadier source file, we can register it.

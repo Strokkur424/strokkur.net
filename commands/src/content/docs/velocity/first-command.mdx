@@ -1,0 +1,104 @@
+---
+title: Your first command
+description: A guide to creating a simple command.
+---
+
+
+At its heart, all commands are created by using the `@Command` annotation on a class. You then declare the
+command name as a parameter in the annotation:
+
+```java
+@Command("firstcommand")
+class MyFirstCommand {
+
+}
+```
+
+And that is all you need for a simple command. This one doesn't do anything yet, but before we add some
+logic, let's add some metadata.
+
+## Adding metadata
+Velocity supports registering a command with aliases. StrokkCommands supports adding those with
+the additional, **optional** annotation `@Aliases`.
+
+```diff lang=java
+ @Command("firstcommand")
++@Aliases("fc")
+ class MyFirstCommand {
+
+ }
+```
+
+## Command logic (Execute methods)
+Command logic is declared by using the `@Executes` annotation on a method. This method *has* to be *at least*
+package-private. You cannot mark the method as `private`. Adding a top-level executes path (with no arguments)
+looks like this:
+```diff lang=java
+ @Command("firstcommand")
+ @Aliases("fc")
+ class MyFirstCommand {
+
++  @Executes
++  void onExecute(Player player) {
++    player.sendRichMessage("<#f29def>Hey there! You just executed your first command ^-^");
++  }
+ }
+```
+
+With Velocity, you can add a `CommandSource`, `Player`, or `ConsoleCommandSource` parameter, which
+describes the command sender of the command. You can only add one of these three.
+
+## Adding a literal (subcommand)
+You can declare top-level literals (also referred to as subcommands) by adding a parameter to the `@Executes` annotation.
+If you want a path called `/fc goodbye`, you'd add this method:
+
+```diff lang=java
+  @Command("firstcommand")
+  @Aliases("fc")
+  class MyFirstCommand {
+
+    @Executes
+    void onExecute(Player player) {
+      sender.sendRichMessage("<#f29def>Hey there! You just executed your first command ^-^");
+    }
+
++   @Executes("goodbye")
++   void onGoodbye(Player player) {
++     player.sendRichMessage("<#c4fffd>You've said goodbye!");
++   }
+  }
+```
+
+As you can see, declaring commands is incredibly easy. And registering them is just as simple!
+
+## Registering the command
+To register your Velocity command with StrokkCommands, you have to do the following steps:
+
+### Compiling the project
+Wait, didn't we skip a few steps? Nope! To be able to register the command, you have to first compile the project.
+The reason for this is so that the annotation processor can run and generate the required source files for your command.
+
+The Brigadier file will always be generated in the same package as the command declaration. Its file name will always be
+`<command_class_name>Brigadier.java`. That means for `your.package.MyCommand`, the new class name will be
+`your.package.MyCommandBrigadier`.
+
+The new source file will be generated in a separate source root, which is managed by your build system.
+**For Gradle**, the generated source files are located under `build/generated/sources/annotationProcessor`.
+
+### Actually registering the command
+Now that we have our Brigadier source file, we can register it.
+
+You can register your Velocity commands inside a `ProxyInitializeEvent`. For the registration, you
+need a `ProxyServer` instance, which you can get with dependency injection (more details can be found on
+the [Velocity plugin basics docs](https://docs.papermc.io/velocity/dev/api-basics/)) and the instance
+of your plugin's main class. Using those objects, you can call the `register` method of the Brigadier
+source file:
+```java title="YourPlugin.java"
+@Subscribe
+void onProxyInitialize(ProxyInitializeEvent event) {
+  MyFirstCommandBrigadier.register(this.proxy, this);
+}
+```
+
+## Testing the command out in-game
+You should now be able to spin up a test server with your plugin and see your command in action!

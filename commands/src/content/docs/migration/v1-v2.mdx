@@ -1,0 +1,41 @@
+---
+title: Migrating from v1 to v2
+description: A guide to updating to version 2.0.
+---
+
+## Updating the dependency
+
+The dependency coordinates have changed. Instead of `net.strokkur:commands-(annotations|processor)`,
+artifacts are now located under `net.strokkur.commands:(annotations|processor)-paper`.
+
+This brings with it a new variable: The platform you are targeting. Previously, only Paper was supported,
+however from `v2` onwards you can also use StrokkCommands on Velocity!
+
+You can view the current dependency declaration for [Paper](/paper/dependency) and [Velocity](/velocity/dependency)
+on their dedicated pages.
+
+## Moved annotations and packages
+
+The package `net.strokkur.commands.annotations` has been removed. Everything inside this package is now contained
+inside `net.strokkur.commands` directly. Exceptions are as follows:
+
+The annotation `@Permission` has been moved from `net.strokkur.commands.annotations` to
+`net.strokkur.commands.permission`.
+
+The following annotations have been moved from `net.strokkur.commands.annotations.arguments` to
+`net.strokkur.commands.paper.arguments`:
+- `@AngleArg`
+- `@CustomArg`
+- `@FinePosArg`
+- `@TimeArg`
+
+The following annotations have been moved from `net.strokkur.commands.annotations` to
+`net.strokkur.commands.paper`:
+- `@Description`
+- `@Executor`
+- `@RequiresOP`
+
+## Removed annotations
+
+`@Suggestion` has been removed entirely. Its functionality has been replaced by the `@CustomSuggestion`
+annotation. Documentation for that is available on the [Suggestions](/common/suggestions) page.
