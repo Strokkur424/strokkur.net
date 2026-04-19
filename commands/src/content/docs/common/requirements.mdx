@@ -1,0 +1,89 @@
+---
+title: Requirements
+description: Adding custom requirement providers with StrokkCommands.
+---
+
+Adding a requirement with StrokkCommands consists of the same three parts that [Suggestions](/common/sugggestions)
+consists of:
+
+1. Creating a new annotation in your code.
+2. Adding the annotation onto a requirement provider.
+3. Using the annotation on an argument parameter.
+
+### Creating a new annotation
+To create custom requirements, you must add a new annotation class. You can put this annotation anywhere.
+Make sure the annotation name is descriptive. You will need to add an annotation onto your annotation
+class: `@CustomRequirement`.
+
+```java title="LevelRequirement.java"
+@CustomRequirement
+public @interface LevelRequirement {
+}
+```
+
+And this is everything you need to do for this step. You might want to add an
+[`@Retention`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/annotation/Retention.html) annotation with
+[`RetentionPolicy.SOURCE`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/annotation/RetentionPolicy.html#SOURCE),
+however, that is not required.
+
+### Defining a requirement provider
+
+You will now have to define a source for your requirement. This can be a field returning a `Predicate<S>` or
+a method or class implementing it. Whichever you end up deciding on, it is important that it is **statically accessible**.
+This requirement will be lifted in a future release; however, there is no way around that at the moment.
+
+The type of this Predicate is dependent on the platform you are using. It's the same type as the type of your
+`CommandContext<S>`. For the remainer of this page, this will be a Paper `CommandSourceStack`.
+
+Let's define a method:
+```java title="LevelRequirementImpl.java"
+public class LevelRequirementImpl {
+  private static final int VALUE = 25;
+
+  @LevelRequirement
+  public static boolean mayRun(CommandSourceStack source) {
+    if (source.getSender() instanceof Player player) {
+      return player.getLevel() >= VALUE;
+    }
+    return false;
+  }
+}
+```
+
+Note the `@LevelRequirement` annotation on the method. This specifies that the method provides the requirement
+for any command executor annotated with that annotation.
+
+### Using the requirement
+
+You can now safely annotate any number of command executor methods with your annotation, and the generated Brigadier
+tree will reference your requirement-providing method for requirement checking.
+
+```java title="MyCommand.java"
+@Command("my-cmd")
+class MyCommand {
+
+  @Executes
+  @LevelRequirement
+  void run() {
+    // ...
+  }
+}
+```
+
+The Brigadier tree for this command would look something like this (depending on the platform):
+
+```java
+Commands.literal("my-cmd")
+    .requires(LevelRequirementImpl::mayRun)
+    .executes((ctx) -> {
+        instance.run();
+        return Command.SINGLE_SUCCESS;
+    });
+```
+
+## Requirement stacking
+
+You can define multiple requirements on the same node. This includes annotations like `@Permission` on supporting
+platforms. StrokkCommands will ensure that **all** requirements are met before the command can be executed. If you need
+fine-grained control about the total requirements, you will need to handle all the requirements manually
+(i.e., if a player requires *either* 25 levels *or* has a specific permission).

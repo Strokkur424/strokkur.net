@@ -11,7 +11,7 @@ adds precisely **0 bytes** of library code to your plugin!
 
 StrokkCommands is an annotation **processor** based library.
 This means that by adding annotations to your code, the processor, which is a separate Java
-program which automatically runs each time you build your project, **generates** all required
+program that automatically runs each time you build your project, **generates** all required
 source files right inside your project. (In a separate 'generated' sources root.)
 
 This effectively provides you with three advantages:
@@ -19,10 +19,10 @@ This effectively provides you with three advantages:
 be abstracted away behind very complex structures.
 2. You can look at the generated source and very easily see whether it fits what you had in mind, which also
 greatly improves the debuggability and doesn't hide everything behind library-internal logic.
-3. Your commands are fully version-independent. As the generated code is based around the long standing Brigadier library,
+3. Your commands are fully version-independent. As the generated code is based around the long-standing Brigadier library,
 there is close to no risk of updates breaking the generated command.
 
-## What are important design principles of StrokkCommands?
+## What are the design principles of StrokkCommands?
 StrokkCommands takes care to do these things:
 
 ### No shading
@@ -30,7 +30,7 @@ You will never, ever have to shade anything into your plugin jar for it to work.
 
 This has the advantage of being straightforward to set up, doesn't cause any
 conflicts when two plugins have the same dependency, but different versions,
-and keeps your plugin jar nice and light (the mentioned 0 bytes of library code).
+and keeps your plugin jar nice and light (the mentioned zero bytes of library code).
 
 ### No reflection
 **No reflection calls are performed**. This results in some light limitations
@@ -39,10 +39,10 @@ package-private instead, this should rarely ever be a real issue.
 
 ### Ease of use
 StrokkCommands aims to be an **instant** dependency. This means you add the dependency and can
-get rid to coding your simple commands, without having to set up anything for it to work.
+get right to coding your simple commands, without having to set up anything for it to work.
 
 ## Do you have a Discord server?
 Yes! You can join the Discord server by visiting https://discord.strokkur.net/, which is my personal server
-where you can talk about my libraries, get notified of updates, or just hang out and talk about server dev
+where you can talk about my libraries, get notified of updates, or just hang out and talk about plugin dev
 in general. It's a very welcoming place, but be warned that I do not tolerate trolling or negative engagement, so
-make sure to read the rules and be a good person!
+make sure to read the rules!

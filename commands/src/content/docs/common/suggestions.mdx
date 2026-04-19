@@ -1,0 +1,79 @@
+---
+title: Suggestions
+description: Adding custom suggestion providers with StrokkCommands.
+---
+
+Adding a suggestion with StrokkCommands consists of three parts:
+
+1. Creating a new annotation in your code.
+2. Adding the annotation onto a suggestion provider.
+3. Using the annotation on an argument parameter.
+
+### Creating a new annotation
+To create custom suggestions, you must add a new annotation class. You can put this annotation anywhere.
+Make sure the annotation name is descriptive. You will need to add an annotation onto your annotation
+class: `@CustomSuggestion`.
+
+```java title="MyStringSuggestions.java"
+@CustomSuggestion
+public @interface MyStringSuggestions {
+}
+```
+
+And this is everything you need to do for this step. You might want to add an
+[`@Retention`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/annotation/Retention.html) annotation with
+[`RetentionPolicy.SOURCE`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/annotation/RetentionPolicy.html#SOURCE),
+however, that is not required.
+
+### Defining a suggestion provider
+
+You will now have to define a source for your suggestions. This can be a field returning a Brigadier `SuggestionProvider` or
+a method or class implementing it. Whichever you end up deciding on, it is important that it is **statically accessible**.
+This requirement will be lifted in a future release; however, there is no way around that at the moment.
+
+For example, let's define a method:
+```java title="MyStringSuggestionsImpl.java"
+public class MyStringSuggestionsImpl {
+  private static final List<String> SUGGESTIONS = List.of("Paper", "Velocity", "Adventure", "Folia");
+
+  @MyStringSuggestions
+  public static <S> CompletableFuture<Suggestions> provide(CommandContext<S> ctx, SuggestionsBuilder builder) {
+    SUGGESTIONS.stream()
+        .filter(str -> str.toLowerCase().startsWith(builder.getRemainingLowerCase()))
+        .forEach(builder::suggest);
+    return builder.buildFuture();
+  }
+}
+```
+
+Note the `@MyStringSuggestions` annotation on the method. This specifies that the method provides the suggestions
+for any argument parameter annotated with that annotation.
+
+### Using the suggestions
+
+You can now safely annotate any number of argument parameters with your annotation, and the generated Brigadier
+tree will reference your suggestion-providing method for any suggestions.
+
+```java title="MyCommand.java"
+@Command("my-cmd")
+class MyCommand {
+
+  @Executes
+  void testSuggestions(@MyStringSuggestions String value) {
+    // ...
+  }
+}
+```
+
+The Brigadier tree for this command would look something like this (depending on the platform):
+
+```java
+Commands.literal("my-cmd")
+    .then(Commands.argument("value", StringArgumentType.word())
+        .suggests(MyStringSuggestionsImpl::provide)
+        .executes((ctx) -> {
+            instance.testSuggestions(StringArgumentType.getString(ctx, "value"));
+            return Command.SINGLE_SUCCESS;
+        })
+    );
+```

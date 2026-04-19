@@ -38,7 +38,7 @@ Command logic is declared by using the `@Executes` annotation on a method. This 
 package-private. You cannot mark the method as `private`. Adding a top-level executes path (with no arguments)
 looks like this:
 ```diff lang=java
- Command("firstcommand")
+ @Command("firstcommand")
  @Aliases("fc")
  @Description("My first StrokkCommands-command!")
  class MyFirstCommand {

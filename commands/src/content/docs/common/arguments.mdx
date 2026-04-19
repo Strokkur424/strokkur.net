@@ -69,7 +69,7 @@ void executeTellPreset(
 This will generate the following Brigadier command tree:
 
 <details>
-  <summary>Warning: Brigadier jumpscare</summary>
+  <summary>Expand for the full code</summary>
 
   ```java title="TellPresetCommandBrigadier.java (Paper module)"
   final TellPresetCommand instance = new TellPresetCommand();
@@ -139,7 +139,7 @@ When you add a `String` parameter, StrokkCommands defaults to adding a `word` st
 You can change the type of the String argument by adding a `@StringArg()` annotation and specifying
 a `StringArgType` inside. The following types exist:
 - `StringArgType.WORD` - The default type. Only supports alphanumerical characters and `+`, `-`, `_`, and `.`.
-- `StringArgType.STRING` - Similar to the `WORD` one, but if you add quotes, you can enter any unicode characters.
+- `StringArgType.STRING` - Similar to the `WORD` one, but if you add quotes, you can enter any Unicode characters.
 - `StringargType.GREEDY` - Accepts all inputs, but cannot have any arguments follow it.
 
 You can statically import these types for better readability in source code.

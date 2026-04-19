@@ -1,0 +1,69 @@
+---
+title: Dependency Injection
+description: Passing parameters to your command class' constructor.
+---
+
+StrokkCommands has full support for any kind of dependency injection.
+
+## Constructor DI
+You can freely add any parameters to your command class' constructor. Those parameters get propagated onto the
+generated class file's `register` and `create` methods, which are then used to construct your command's class.
+
+```java title="BookCommand.java"
+@Command("book")
+class CommandBook {
+  private final BookManager manager;
+  private final Logger logger;
+
+  public CommandBook(BookManager manager, Logger logger) {
+    this.manager = manager;
+    this.logger = logger;
+  }
+
+  @Executes
+  void printBooks() {
+    logger.info("Currently loaded books: {}", manager.createBookString());
+  }
+}
+```
+
+You can register the command as follows (example: Velocity platform):
+
+```java
+final BookManager manager = ...;
+final ProxyServer proxy = ...;
+final Logger logger = ...;
+
+// The first two parameters are always required on Velocity
+CommandBookBrigadier.register(proxy, this, manager, logger);
+```
+
+## Using a DI framework
+StrokkCommands also provides support for dependency injection frameworks, like [Guice](https://github.com/google/guice).
+To configure DI-framework support, you need to add the `@UseInjection` annotation onto your command class. From there on
+out, you can use any `@Inject` annotation your framework expects onto the constructor or fields.
+
+```java title="CommandBook"
+@Command("book")
+@UseInjection
+class CommandBook {
+  private @Inject BookManager manager;
+  private @Inject Logger logger;
+
+  @Executes
+  void printBooks() {
+    logger.info("Currently loaded books: {}", manager.createBookString());
+  }
+}
+```
+
+To register your command, you now need to construct an instance of `CommandBookBrigadier` using your DI framework.
+For **Guice**, this might look something like the code below. Once you have an instance, you can call the `register/create`
+methods as normal, however the constructor parameters of `CommandBook` are no longer present as method parameters.
+
+```java
+final Injector injector = Guice.createInjector(new YourModule());
+final ProxyServer proxy = ...;
+
+injector.getInstance(CommandBookBrigadier.class).register(proxy, this);
+```

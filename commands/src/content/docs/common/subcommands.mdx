@@ -6,11 +6,11 @@ description: A guide to subcommands
 import { Aside } from "@astrojs/starlight/components";
 
 Subcommands are a feature introduced with [StrokkCommands v1.3.0](https://github.com/Strokkur424/StrokkCommands/releases/tag/v1.3.0),
-which allow you to nest classes, annotated with the `@Subcommand` annotation in order to add preceding literals to
+which allow you to nest classes, annotated with the `@Subcommand` annotation to add preceding literals to
 any executors (or further nested classes!) inside the nested class.
 
 ## Syntax
-The syntax is very simple. An example nested command might look like this:
+The syntax is basic. An example nested command might look like this:
 
 ```java title="FlyCommand.java"
 @Command("fly")
@@ -72,12 +72,12 @@ class FlyCommand {
 }
 ```
 
-There are numerous ways to write a command. Nested/inner classes (as they are called officially) are just another
-instrument to reach the same solution. The advantage of inner classes is that they reduce repetition (defining the enable literal)
+There are many ways to write a command. Nested/inner classes (as they are called officially) are just another
+instrument to reach the same solution. The advantage of inner classes is that they reduce repetition (defining the "enable" literal)
 and improve clarity on which executors are together.
 
 ## Inner records
-The more interesting use case of subcommands like this are inner records. With records, you can also define arguments.
+The more interesting use case of subcommands like this is inner records. With records, you can also define arguments.
 
 A nice use case for this could be the replication of a `/give item <target> <item> [<count>]` command, where you always have a target player and the
 item stack, but also an optional count argument:

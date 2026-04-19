@@ -31,9 +31,12 @@ export default defineConfig({
             { slug: "common/faq" },
             { slug: "common/executors" },
             { slug: "common/arguments" },
+            { slug: "common/suggestions" },
+            { slug: "common/requirements" },
             { slug: "common/records" },
             { slug: "common/subcommands" },
             { slug: "common/external-subcommands" },
+            { slug: "common/dependency-injection" },
           ],
         },
         {

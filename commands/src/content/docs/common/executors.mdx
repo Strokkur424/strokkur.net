@@ -3,15 +3,15 @@ title: Command handlers
 description: A guide to adding logic to your commands.
 ---
 
-All commands are defined inside classes annotated with the `@Command` annotation. In order to add logic to your
-command you have to annotate a method inside a command class with the `@Executes` annotation, which marks that
+All commands are defined inside classes annotated with the `@Command` annotation. To add logic to your
+command, you have to annotate a method inside a command class with the `@Executes` annotation, which marks that
 method (and its parameters) as a command path StrokkCommands should generate.
 
 The simplest command can look like this:
 
 ```java title="BasicCommand.java"
 /// Note that all command classes and methods should have a visibility
-/// of at least package-private, however there is no need to make them public.
+/// of at least package-private; however, there is no need to make them public.
 @Command("basic")
 class BasicCommand {
   private static final Logger LOGGER = LoggerFactory.getLogger(BasicCommand.class);
@@ -47,8 +47,8 @@ class TurnCommand {
 }
 ```
 
-Paths can merge together! This means if you want a command to have the paths `/long something enabled` and
-`/long something disabled`, you can simply provide these paths as you'd expect:
+Paths can merge! This means if you want a command to have the paths `/long something enabled` and
+`/long something disabled`, you can provide these paths as you'd expect:
 
 ```java title="LongCommand.java"
 @Command("long")
@@ -77,7 +77,7 @@ You can do this very easily with the `@DefaultExecutes` annotation. This annotat
 method being used on **all** command nodes, which don't have an explicit `@Executes` annotation, whilst still
 matching signature of the method (matching path in the annotation parameter and arguments).
 
-You can use this to your advantage to create a super simple help message for your command, if insufficient
+You can use this to your advantage to create a super simple help message for your command if insufficient
 arguments have been provided:
 
 ```java title="HelpfulCommand.java"
