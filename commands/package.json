@@ -12,16 +12,16 @@
     "format:check": "prettier . --check"
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "^7.1.0",
-    "@astrojs/starlight": "^0.38.3",
-    "astro": "^6.1.8",
-    "sharp": "^0.34.5",
+    "@astrojs/markdown-remark": "7.2.2",
+    "@astrojs/starlight": "0.41.6",
+    "astro": "7.1.6",
+    "sharp": "^0.35.3",
     "unist-util-visit": "^5.1.0",
-    "wrangler": "^4.83.0"
+    "wrangler": "^4.118.0"
   },
   "devDependencies": {
     "@types/mdast": "^4.0.4",
-    "prettier": "^3.8.3",
+    "prettier": "^3.9.6",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-organize-imports": "^4.3.0"
   },

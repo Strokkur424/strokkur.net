@@ -29,3 +29,7 @@
   --sl-color-gray-7: #ffffff;
   --sl-color-black: #ffffff;
 }
+
+@view-transition {
+  navigation: auto;
+}
