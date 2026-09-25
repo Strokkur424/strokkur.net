@@ -61,6 +61,16 @@ export default defineConfig({
           items: [{ slug: "migration/v1-v2" }],
         },
       ],
+      head: [
+        {
+          tag: "script",
+          attrs: {
+            id: "discord:component-embed",
+            type: "application/json",
+            content: `{"component":{"type":17,"accent_color":16741120,"components":[{"type":9,"components":[{"type":10,"content":"# 🔥 StrokkCommands\\n-# A compile-time only, annotation-based command library for Paper and Velocity! Save yourself some time writing Brigadier commands by hand, if you can generate them on the fly!\\n\\nExample? Sure!\\n\`\`\`java\\n@Command(\\"give\\")\\nclass GiveCommand {\\n\\n  @Executes\\n  void give(CommandSender sender, ItemStack item, @DefaultToExecutor Player target) {\\n    target.give(item);\\n    sender.sendRichMessage(\\"<#ffbbbb><target> has received 1x <item>\\",\\n      Placeholder.component(\\"target\\", target.displayName()),\\n      Placeholder.component(\\"item\\", item.effectiveName())\\n    );\\n  }\\n}\\n\`\`\`\\n\\nThis is all you need to create a command with an \`ItemStack\` argument and an optional \`Player\` argument, which defaults to the player who executed the command! If you like it, jump right in by [reading the documentation](<https://commands.strokkur.net>) and [joining the Discord server](<https://discord.strokkur.net>)! <:MahiruHeart:1520519275574460487>"}],"accessory":{"type":11,"media":{"url":"https://commands.strokkur.net/patchnotes.png"}}}]},{"type":1,"components":[{"type":2,"style":5,"label":"Documentation","url":"https://commands.strokkur.net/","emoji":{"name":"🔥"}},{"type":2,"style":5,"label":"GitHub","url":"https://commands.strokkur.net/","emoji":{"id":"927433909254369291","name":"github"}},{"type":2,"style":5,"label":"Join the Discord","url":"https://commands.strokkur.net/","emoji":{"id":"1553166325277523968","name":"discord"}}]}}`
+          },
+        }
+      ]
     }),
   ],
   markdown: {
